@@ -4,13 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Run commands
 
+### Local dev
+
 ```bash
 pip3 install -r requirements.txt --break-system-packages   # one-time
 cp .env.example .env && $EDITOR .env                       # configure Listmonk credentials
-python3 app.py                                             # dev server on http://127.0.0.1:5000
+python3 app.py                                             # Flask dev server on http://127.0.0.1:5000
 ```
 
-DB schema initialises automatically on app start. To wipe and start fresh, delete `mail_exclude.db`.
+### Docker (production / VM deploy)
+
+```bash
+cp .env.example .env && $EDITOR .env                       # Listmonk credentials
+docker compose up -d                                       # builds image + starts on :5000
+docker compose logs -f                                     # tail logs
+docker compose down                                        # stop
+```
+
+Gunicorn (`-w 1 --threads 4`) is the WSGI server inside the container — single worker so the
+`auto_sync` daemon thread is a singleton. DB persists in bind-mounted `./data/mail_exclude.db`.
+
+To upgrade: `git pull && docker compose up -d --build`. To wipe DB: delete `./data/`.
+
+The schema initialises automatically on app start (both modes).
 
 ## Purpose
 
@@ -37,12 +53,14 @@ Filter wizard at /filter (4 steps, HTMX fragment swaps)
 
 ## Key files
 
-- `app.py` — all Flask routes (filter wizard, sync, permanent excludes)
-- `filters.py` — pure filter logic; `apply_filter()` is the heart of the tool
-- `listmonk_client.py` — minimal Listmonk API wrapper (`fetch_lists`, `fetch_subscriber_emails`); reads `LISTMONK_*` env vars from `.env`
-- `sync.py` — orchestrates Listmonk → SQLite refresh (`refresh_lists_index`, `sync_list`)
-- `db.py` — SQLite connection + schema; `init_schema()` is idempotent
+- `app.py` — all Flask routes (filter wizard, sync, permanent excludes); `start_auto_sync()` runs daemon thread
+- `wsgi.py` — gunicorn entrypoint; runs `init_schema()` + `start_auto_sync()` on import
+- `filters.py` — pure filter logic; `apply_filter()` is the heart of the tool; region classifier via TLD
+- `listmonk_client.py` — Listmonk API wrapper (`fetch_lists`, `fetch_subscribers`, `create_list`, `add_subscribers_to_list`); reads `LISTMONK_*` env vars from `.env`
+- `sync.py` — orchestrates Listmonk → SQLite refresh (`refresh_lists_index` upserts + prunes, `sync_list` pulls subs)
+- `db.py` — SQLite connection + schema; `init_schema()` idempotent with column-add migration. `DB_PATH` honors env var (`/app/data/mail_exclude.db` in Docker, `./mail_exclude.db` locally)
 - `templates/` — Jinja2; partials prefixed with `_` are HTMX fragment targets
+- `Dockerfile` + `docker-compose.yml` + `.dockerignore` — production deployment
 
 ## SQLite schema
 

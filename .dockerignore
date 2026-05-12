@@ -1,0 +1,13 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+.venv
+venv
+.env
+*.db
+*.db-journal
+.DS_Store
+Mail-Exclude.xlsx
+data/

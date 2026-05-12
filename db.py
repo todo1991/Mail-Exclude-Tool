@@ -1,7 +1,8 @@
+import os
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "mail_exclude.db"
+DB_PATH = Path(os.environ.get("DB_PATH") or (Path(__file__).parent / "mail_exclude.db"))
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS lists (
