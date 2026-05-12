@@ -1,0 +1,17 @@
+<div class="p-4 bg-emerald-50 border border-emerald-200 rounded-md flex items-center justify-between">
+  <div>
+    <div class="text-2xl font-semibold text-emerald-700">
+      {{ "{:,}".format(result.kept_count) }} <span class="text-base font-normal text-emerald-600">emails kept</span>
+    </div>
+    <div class="text-sm text-emerald-600 mt-1">
+      From {{ "{:,}".format(source_count) }} initial — excluded {{ "{:,}".format(result.excluded_count) }}
+    </div>
+  </div>
+  <div class="text-xs text-emerald-700 space-y-0.5 text-right">
+    {% if result.breakdown.requester_email %}<div>Email exclude: {{ result.breakdown.requester_email }}</div>{% endif %}
+    {% if result.breakdown.permanent_email %}<div>Perm email: {{ result.breakdown.permanent_email }}</div>{% endif %}
+    {% if result.breakdown.permanent_domain %}<div>Perm domain: {{ result.breakdown.permanent_domain }}</div>{% endif %}
+    {% if result.breakdown.adhoc_email %}<div>Ad-hoc email: {{ result.breakdown.adhoc_email }}</div>{% endif %}
+    {% if result.breakdown.adhoc_domain %}<div>Ad-hoc domain: {{ result.breakdown.adhoc_domain }}</div>{% endif %}
+  </div>
+</div>

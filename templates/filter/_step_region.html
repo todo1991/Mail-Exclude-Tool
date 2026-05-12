@@ -1,0 +1,69 @@
+<div data-step="2">
+  <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Step 2 / 5</p>
+  <h2 class="text-2xl font-semibold mb-1">Region</h2>
+  <p class="text-slate-500 mb-2">
+    Filter source by geographic region — classified by domain TLD
+    (<code class="bg-slate-100 px-1 rounded">.cn .hk</code> → China;
+    <code class="bg-slate-100 px-1 rounded">.ae .sa .qa .il .tr ...</code> → Middle East).
+  </p>
+  <p class="text-xs text-amber-700 mb-6">
+    ⚠ <code class="bg-amber-100 px-1 rounded">.com</code> domains cannot be classified by TLD — if you need to exclude
+    CN/ME companies using .com, do it in the <strong>Domain Exclude</strong> step.
+  </p>
+
+  {% for lid in list_ids %}<input type="hidden" name="list_id" value="{{ lid }}">{% endfor %}
+
+  <div class="mb-4 p-3 bg-slate-100 rounded-md text-sm text-slate-600">
+    <span class="font-medium">Source:</span>
+    {{ targets | map(attribute='name') | join(", ") }}
+    — {{ "{:,}".format(source_emails_count) }} emails total (deduped)
+  </div>
+
+  {% set modes = [
+    ("all",        "All regions",                       "No filter"),
+    ("cn_only",    "China only",                        "Keep region == cn (.cn .hk)"),
+    ("me_only",    "Middle East only",                  "Keep region == me"),
+    ("cn_me_only", "China + Middle East",               "Keep region in (cn, me)"),
+    ("no_cn",      "Exclude China",                     "Drop region == cn"),
+    ("no_me",      "Exclude Middle East",               "Drop region == me"),
+    ("no_cn_me",   "Exclude China + Middle East",       "Drop region in (cn, me)"),
+  ] %}
+
+  <div class="space-y-2">
+    {% for value, label, hint in modes %}
+    <label class="flex items-center gap-4 p-3 rounded-lg border-2 border-slate-200 hover:border-indigo-300 cursor-pointer has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50">
+      <input type="radio" name="region_mode" value="{{ value }}"
+             class="w-4 h-4 text-indigo-600"
+             {% if region_mode == value or (not region_mode and value == 'all') %}checked{% endif %}>
+      <div class="flex-1">
+        <div class="font-medium">{{ label }}</div>
+        <div class="text-xs text-slate-400">{{ hint }}</div>
+      </div>
+      <div class="text-right text-sm font-mono">
+        <div class="font-semibold {% if region_counts[value] == 0 %}text-slate-400{% else %}text-emerald-700{% endif %}">
+          {{ "{:,}".format(region_counts[value]) }}
+        </div>
+        <div class="text-[10px] text-slate-400">emails</div>
+      </div>
+    </label>
+    {% endfor %}
+  </div>
+
+  <div class="flex justify-between mt-8">
+    <button type="button"
+            hx-post="{{ url_for('filter_wizard') }}"
+            hx-target="#wizard-body"
+            hx-select="#wizard-body > *"
+            hx-include="#wizard-form"
+            class="px-6 py-2.5 text-slate-600 hover:bg-slate-100 rounded-md">
+      ← Back
+    </button>
+    <button type="button"
+            hx-post="{{ url_for('filter_email_exclude') }}"
+            hx-target="#wizard-body"
+            hx-include="#wizard-form"
+            class="px-6 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium">
+      Next →
+    </button>
+  </div>
+</div>

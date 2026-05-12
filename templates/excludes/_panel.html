@@ -1,0 +1,74 @@
+<div id="excludes-panel">
+  {% if flash %}
+  <div class="mb-4 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-md text-sm text-emerald-700">{{ flash }}</div>
+  {% endif %}
+  <div class="grid grid-cols-2 gap-6">
+
+    <div>
+      <h3 class="font-medium mb-2">Emails ({{ data.emails|length }})</h3>
+      <form hx-post="{{ url_for('excludes_add') }}"
+            hx-target="#excludes-panel"
+            hx-swap="outerHTML"
+            hx-on::after-request="if(event.detail.successful) this.reset()"
+            class="mb-3">
+        <input type="hidden" name="type" value="email">
+        <textarea name="values"
+                  rows="3"
+                  placeholder="One email per line"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-md font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"></textarea>
+        <button type="submit" class="mt-2 px-4 py-1.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium">
+          + Add email
+        </button>
+      </form>
+      <div class="border border-slate-200 rounded-md max-h-96 overflow-y-auto divide-y divide-slate-100">
+        {% for item in data.emails %}
+        <div class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 text-sm">
+          <span class="font-mono">{{ item.value }}</span>
+          <button type="button"
+                  hx-delete="{{ url_for('excludes_delete', exclude_id=item.id) }}"
+                  hx-target="#excludes-panel"
+                  hx-swap="outerHTML"
+                  hx-confirm="Delete {{ item.value }}?"
+                  class="text-slate-400 hover:text-red-600 px-2">✕</button>
+        </div>
+        {% else %}
+        <div class="px-3 py-6 text-center text-slate-400 text-sm">No emails yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div>
+      <h3 class="font-medium mb-2">Domains ({{ data.domains|length }})</h3>
+      <form hx-post="{{ url_for('excludes_add') }}"
+            hx-target="#excludes-panel"
+            hx-swap="outerHTML"
+            hx-on::after-request="if(event.detail.successful) this.reset()"
+            class="mb-3">
+        <input type="hidden" name="type" value="domain">
+        <textarea name="values"
+                  rows="3"
+                  placeholder="One domain per line (no @)&#10;competitor.com"
+                  class="w-full px-3 py-2 border border-slate-300 rounded-md font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"></textarea>
+        <button type="submit" class="mt-2 px-4 py-1.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium">
+          + Add domain
+        </button>
+      </form>
+      <div class="border border-slate-200 rounded-md max-h-96 overflow-y-auto divide-y divide-slate-100">
+        {% for item in data.domains %}
+        <div class="flex items-center justify-between px-3 py-1.5 hover:bg-slate-50 text-sm">
+          <span class="font-mono">{{ item.value }}</span>
+          <button type="button"
+                  hx-delete="{{ url_for('excludes_delete', exclude_id=item.id) }}"
+                  hx-target="#excludes-panel"
+                  hx-swap="outerHTML"
+                  hx-confirm="Delete {{ item.value }}?"
+                  class="text-slate-400 hover:text-red-600 px-2">✕</button>
+        </div>
+        {% else %}
+        <div class="px-3 py-6 text-center text-slate-400 text-sm">No domains yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>

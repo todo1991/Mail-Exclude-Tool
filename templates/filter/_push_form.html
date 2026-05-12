@@ -1,0 +1,45 @@
+<div id="listmonk-push-block" class="mb-6 p-5 rounded-md border-2 border-indigo-200 bg-indigo-50/40">
+  <h3 class="text-lg font-semibold mb-1 flex items-center gap-2">
+    <span>📧</span> Send via Listmonk
+  </h3>
+  <p class="text-sm text-slate-500 mb-4">
+    Create a new list in Listmonk with the {{ "{:,}".format(kept_count) }} filtered subscribers.
+    Then go to Listmonk → New Campaign → pick this list → set up &amp; send.
+  </p>
+
+  {% if error %}
+  <div class="mb-3 px-3 py-2 bg-rose-50 border border-rose-200 rounded-md text-sm text-rose-700">
+    ⚠ {{ error }}
+  </div>
+  {% endif %}
+
+  <label class="block mb-3">
+    <span class="text-sm font-medium text-slate-700">List name <span class="text-rose-600">*</span></span>
+    <input type="text"
+           name="list_name"
+           value="{{ name or '' }}"
+           required
+           placeholder="e.g.: WTB_2026-05-12_32GB-2933"
+           autocomplete="off"
+           class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">
+  </label>
+
+  <label class="block mb-4">
+    <span class="text-sm font-medium text-slate-700">Description (optional)</span>
+    <textarea name="description"
+              rows="2"
+              placeholder="Product wanted, context, etc."
+              class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-md text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">{{ description or '' }}</textarea>
+  </label>
+
+  <button type="button"
+          {% if kept_count == 0 %}disabled{% endif %}
+          hx-post="{{ url_for('filter_push_to_listmonk') }}"
+          hx-target="#listmonk-push-block"
+          hx-swap="outerHTML"
+          hx-include="#wizard-form"
+          hx-disabled-elt="this"
+          class="px-5 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed">
+    ✉ Create list in Listmonk{% if kept_count %} with {{ "{:,}".format(kept_count) }} subscribers{% endif %}
+  </button>
+</div>

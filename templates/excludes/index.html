@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white rounded-lg border border-slate-200 p-6">
+  <div class="mb-6">
+    <h2 class="text-xl font-semibold mb-1">Permanent excludes</h2>
+    <p class="text-sm text-slate-500">
+      Emails/domains added here are <strong>always excluded</strong> on every filter, across all lists.
+    </p>
+  </div>
+  <div id="excludes-panel">
+    {% include "excludes/_panel.html" %}
+  </div>
+</div>
+{% endblock %}

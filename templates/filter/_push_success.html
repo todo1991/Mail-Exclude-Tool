@@ -1,0 +1,39 @@
+<div id="listmonk-push-block" class="mb-6 p-5 rounded-md border-2 border-emerald-300 bg-emerald-50">
+  <h3 class="text-lg font-semibold mb-3 text-emerald-800 flex items-center gap-2">
+    <span>✅</span> Created in Listmonk
+  </h3>
+
+  <div class="space-y-1 text-sm text-emerald-900 mb-4">
+    <div>
+      <span class="text-slate-600">List:</span>
+      <code class="bg-white px-1.5 py-0.5 rounded font-mono">{{ list_name }}</code>
+    </div>
+    <div>
+      <span class="text-slate-600">Subscribers:</span>
+      <strong>{{ "{:,}".format(added_count) }}</strong> / {{ "{:,}".format(kept_count) }} added
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-3">
+    {% if list_url %}
+    <a href="{{ list_url }}"
+       target="_blank"
+       rel="noopener"
+       class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-md inline-flex items-center gap-1">
+      → Open list in Listmonk
+    </a>
+    {% endif %}
+    <button type="button"
+            hx-post="{{ url_for('filter_push_form') }}"
+            hx-target="#listmonk-push-block"
+            hx-swap="outerHTML"
+            hx-include="#wizard-form"
+            class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-sm font-medium rounded-md">
+      ↺ Create another list
+    </button>
+  </div>
+
+  <p class="text-xs text-emerald-700 mt-4">
+    Next step: go to Listmonk → New Campaign → pick list <code class="bg-white px-1 rounded">{{ list_name }}</code> → set up subject/body → Send.
+  </p>
+</div>

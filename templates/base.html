@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mail Exclude Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="{{ url_for('static', filename='js/autocomplete.js') }}"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <h1 class="text-xl font-semibold flex items-center gap-2">
+        <span>📧</span> Mail Exclude Tool
+      </h1>
+      <nav class="flex gap-1 text-sm">
+        {% set tab = request.path.split('/')[1] or 'filter' %}
+        <a href="{{ url_for('filter_wizard') }}"
+           class="px-4 py-2 rounded-md font-medium {% if tab == 'filter' %}bg-indigo-600 text-white{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
+          Filter & Send
+        </a>
+        <a href="{{ url_for('sync_page') }}"
+           class="px-4 py-2 rounded-md font-medium {% if tab == 'sync' %}bg-indigo-600 text-white{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
+          Sync
+        </a>
+        <a href="{{ url_for('excludes_page') }}"
+           class="px-4 py-2 rounded-md font-medium {% if tab == 'excludes' %}bg-indigo-600 text-white{% else %}text-slate-600 hover:bg-slate-100{% endif %}">
+          Permanent Excludes
+        </a>
+      </nav>
+    </div>
+  </header>
+  <main class="max-w-6xl mx-auto px-6 py-8">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<div data-step="3">
+  <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Step 3 / 5</p>
+  <h2 class="text-2xl font-semibold mb-1">Email Exclude</h2>
+  <p class="text-slate-500 mb-6">One or more emails to exclude (e.g., the requester(s) who emailed asking).</p>
+
+  {% for lid in list_ids %}<input type="hidden" name="list_id" value="{{ lid }}">{% endfor %}
+  <input type="hidden" name="region_mode" value="{{ region_mode or 'all' }}">
+  <textarea name="extra_domains" class="hidden" tabindex="-1" aria-hidden="true">{{ extra_domains_value or '' }}</textarea>
+
+  <label class="block">
+    <span class="text-sm font-medium text-slate-700">Emails</span>
+    <span class="text-xs text-slate-400 block">One email per line — type to autocomplete from the source list (↑↓ to navigate, Enter/Tab to insert)</span>
+    <div class="relative mt-1">
+      <textarea name="requester"
+                id="requester-input"
+                rows="5"
+                required
+                autofocus
+                autocomplete="off"
+                placeholder="al@teksavers.com&#10;another@vendor.com"
+                class="w-full px-3 py-2 border border-slate-300 rounded-md font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none">{{ requester or '' }}</textarea>
+      <div id="requester-suggest"
+           class="absolute z-50 left-0 right-0 mt-0.5 bg-white border border-slate-300 rounded-md shadow-lg max-h-56 overflow-y-auto hidden"></div>
+    </div>
+    <div id="requester-warn" class="mt-1.5 text-xs text-amber-700 hidden"></div>
+  </label>
+
+  {% if error %}
+  <p class="mt-2 text-sm text-red-600">⚠ {{ error }}</p>
+  {% endif %}
+
+  <div class="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-md text-sm text-slate-600">
+    Only the exact emails entered here are excluded. To also exclude their domains, there's a suggestion in the next step.
+  </div>
+
+  <div class="flex justify-between mt-8">
+    <button type="button"
+            hx-post="{{ url_for('filter_region') }}"
+            hx-target="#wizard-body"
+            hx-include="#wizard-form"
+            class="px-6 py-2.5 text-slate-600 hover:bg-slate-100 rounded-md">
+      ← Back
+    </button>
+    <button type="button"
+            hx-post="{{ url_for('filter_domain_exclude') }}"
+            hx-target="#wizard-body"
+            hx-include="#wizard-form"
+            class="px-6 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 font-medium">
+      Next →
+    </button>
+  </div>
+</div>
+
+<script id="step2-source-data" type="application/json">{{ source_emails | tojson }}</script>
+<script>
+  (function () {
+    const SRC = JSON.parse(document.getElementById("step2-source-data").textContent || "[]");
+    const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+    window.setupAutoSuggest({
+      taId: "requester-input",
+      ddId: "requester-suggest",
+      warnId: "requester-warn",
+      source: SRC,
+      validate: (s) => EMAIL_RE.test(s),
+    });
+  })();
+</script>
