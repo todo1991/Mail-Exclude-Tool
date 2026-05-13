@@ -51,6 +51,8 @@ Filter wizard at /filter (4 steps, HTMX fragment swaps)
 
 **Why a cache and not direct API**: filter wizard's step 3 has a live preview that re-runs the filter on every keystroke (debounced 400ms). Listmonk's `GET /api/subscribers?per_page=all` takes ~20s for an 8k-subscriber list — unusable without caching. Cache is invalidated only when the user clicks **Sync** on the `/sync` tab.
 
+**Asset loading**: `templates/base.html` links self-hosted Tailwind CSS + HTMX when those files exist, else falls back to CDN. `_inject_asset_flags` (in `app.py`) stats `static/css/app.css` and `static/js/htmx.min.js` per request and exposes `has_compiled_css` / `has_local_htmx` to the template. The Dockerfile downloads the Tailwind standalone CLI, builds a minified `app.css`, and fetches `htmx.min.js`, so production never depends on CDN. Local dev can build CSS optionally (see README) or just use CDN.
+
 ## Key files
 
 - `app.py` — all Flask routes (filter wizard, sync, permanent excludes); `start_auto_sync()` runs daemon thread

@@ -11,3 +11,9 @@ venv/
 # Source data — contains real vendor emails, not needed at runtime
 # (Listmonk is the source of truth post-initial-seed).
 Mail-Exclude.xlsx
+
+# Built/fetched assets (Tailwind compiles inside Dockerfile; HTMX downloaded there too).
+# Local dev falls back to CDN automatically.
+static/css/app.css
+static/js/htmx.min.js
+node_modules/

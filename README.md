@@ -58,6 +58,22 @@ python3 app.py                            # Flask dev server on http://127.0.0.1
 
 Auto-reloads on file changes (debug mode). DB lives at `./mail_exclude.db`.
 
+By default, local dev pulls Tailwind + HTMX from CDN (so you don't need any
+build step). For a production-like local run without CDN, build a static CSS
+once:
+
+```bash
+# Download tailwindcss standalone (~50 MB, one-time):
+curl -fsSL -o /usr/local/bin/tailwindcss \
+  https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.13/tailwindcss-macos-arm64
+chmod +x /usr/local/bin/tailwindcss
+
+# Build the static CSS — re-run after adding new utility classes:
+tailwindcss -c tailwind.config.js -i static/css/input.css -o static/css/app.css --minify
+```
+
+The template auto-switches to the compiled CSS when `static/css/app.css` exists.
+
 ## Configuration
 
 `.env` (gitignored — never commit):

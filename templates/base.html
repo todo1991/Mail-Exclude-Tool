@@ -4,8 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mail Exclude Tool</title>
+  {% if has_compiled_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  {% else %}
   <script src="https://cdn.tailwindcss.com"></script>
+  {% endif %}
+  {% if has_local_htmx %}
+  <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>
+  {% else %}
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  {% endif %}
   <script src="{{ url_for('static', filename='js/autocomplete.js') }}"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">

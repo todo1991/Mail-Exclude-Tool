@@ -11,3 +11,9 @@ venv
 .DS_Store
 Mail-Exclude.xlsx
 data/
+
+# Don't carry locally-built CSS / HTMX into the build context;
+# Dockerfile downloads + builds these fresh in the image.
+static/css/app.css
+static/js/htmx.min.js
+node_modules/

@@ -17,6 +17,20 @@ AUTO_SYNC_INTERVAL_SECONDS = 300  # 5 minutes
 app = Flask(__name__)
 
 
+@app.context_processor
+def _inject_asset_flags():
+    """Tell templates whether self-hosted assets exist; fall back to CDN if not.
+
+    Per-request stat is fine; static files only check existence (no I/O on hit).
+    """
+    from pathlib import Path
+    static_dir = Path(app.static_folder)
+    return {
+        "has_compiled_css": (static_dir / "css" / "app.css").is_file(),
+        "has_local_htmx": (static_dir / "js" / "htmx.min.js").is_file(),
+    }
+
+
 # ---------------------------------------------------------------- helpers
 
 def list_lists_with_cache() -> list[dict]:
